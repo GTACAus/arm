@@ -1,25 +1,61 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="en-au">
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | GTAC 3D Arm</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Biomechanics: the human arm | GTAC</title>
+    <link rel="icon" href="TemplateData/favicon.ico">
+    <link rel="apple-touch-icon" href="TemplateData/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="TemplateData/style.css">
     <script src="TemplateData/UnityProgress.js"></script>
     <script src="Build/UnityLoader.js"></script>
     <script>
-      var unityInstance = UnityLoader.instantiate("unityContainer", "Build/webgl.json", {onProgress: UnityProgress});
+      var unityInstance = UnityLoader.instantiate("unityContainer", "Build/webgl.json", {onProgress: onProgress});
+
+      function onProgress(instance, progress) {
+        UnityProgress(instance, progress);
+        if (progress == 1)
+          document.getElementById("stage").classList.add("loaded");
+      }
+
+      function toggleFullscreen() {
+        var stage = document.getElementById("stage");
+        if (document.fullscreenElement || document.webkitFullscreenElement) {
+          (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+        } else if (stage.requestFullscreen) {
+          stage.requestFullscreen();
+        } else if (stage.webkitRequestFullscreen) {
+          stage.webkitRequestFullscreen();
+        } else {
+          // No Fullscreen API on the element (e.g. iPhone Safari): fall back to Unity's own.
+          unityInstance.SetFullscreen(1);
+        }
+      }
     </script>
   </head>
   <body>
-    <div class="webgl-content">
-      <div id="unityContainer" style="width: 960px; height: 600px"></div>
-      <div class="footer">
-        <div class="webgl-logo"></div>
-        <div class="fullscreen" onclick="unityInstance.SetFullscreen(1)"></div>
-        <div class="title">GTAC 3D Arm</div>
+    <header class="site-header">
+      <h1>Biomechanics: the human arm</h1>
+      <a href="https://gtac.edu.au/" class="site-logo"><img src="TemplateData/gtac-logo.png" alt="GTAC — A world worth discovering"></a>
+    </header>
+
+    <main>
+      <div id="stage" class="stage">
+        <div class="frame">
+          <div id="unityContainer"></div>
+          <!-- Covers the old GTAC logo baked into the Unity build (no Unity source available).
+               Shown only once loaded; the loading screen carries its own logo. -->
+          <div class="logo-cover" aria-hidden="true"><img src="TemplateData/gtac-logo.png" alt=""></div>
+        </div>
       </div>
-    </div>
+
+      <div class="toolbar">
+        <p>Drag to rotate. Click any part of the arm to see its name.</p>
+        <button type="button" class="fullscreen-btn" onclick="toggleFullscreen()">Fullscreen</button>
+      </div>
+    </main>
   </body>
 </html>
